@@ -32,3 +32,6 @@ Thumbs.db
 # IDE
 .idea/
 .vscode/
+dataset/raw/semgrep_report.json
+trufflehog_report.json
+*.zip

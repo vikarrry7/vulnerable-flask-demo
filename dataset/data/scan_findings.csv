@@ -1,0 +1,11 @@
+finding_id,tool,target_file,line,severity,category,description,expert_comment
+1,Semgrep,app.py,17,High,SQL Injection,Formatted SQL query with user input via f-string,Критично: злоумышленник может внедрить ' OR '1'='1 и обойти аутентификацию. Заменить на параметризованные запросы (prepared statements)
+2,Semgrep,app.py,20,High,SQL Injection,Raw SQL query via cursor.execute,Подтверждает уязвимость №1. Использовать параметры вместо конкатенации строк
+3,Semgrep,app.py,27,High,Insecure Deserialization,Flask route uses pickle.loads on user data,Критично: возможно удалённое выполнение кода (RCE). Заменить на JSON
+4,Semgrep,app.py,27,High,Insecure Deserialization,pickle.loads allows arbitrary code execution,Дублирует находку №3. Отказаться от pickle полностью
+5,Semgrep,app.py,34,Critical,Command Injection,os.popen with user-controlled host,Критично: возможно выполнение произвольных команд. Использовать subprocess с shell=False и валидацией
+6,Semgrep,app.py,39,Medium,Debug Mode Enabled,Flask debug=True in production,Раскрывает stack trace и интерактивный debugger. Отключить в production
+7,Semgrep,app.py,9,Medium,Hardcoded Secret,Hardcoded SECRET_KEY,Секрет в открытом виде. Использовать переменные окружения или secrets manager
+8,Semgrep,app.py,10,Medium,Hardcoded Secret,Hardcoded DB_PASSWORD,Аналогично. Ротировать пароль и хранить в .env (не в Git)
+9,Semgrep,app.py,34,Low,App Run Directly,Top-level app.run() without if __name__ guard,Использовать if __name__ == "__main__":
+10,Semgrep,app.py,16,Medium,Weak Authentication,Password comparison in plain SQL,Использовать хеширование паролей (bcrypt, argon2)

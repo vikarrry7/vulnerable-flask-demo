@@ -1,0 +1,11 @@
+dataset_name: vulnerable_flask_code_scan
+version: 1.0
+date: 2026-09-20
+target_repository: https://github.com/vikarrry7/vulnerable-flask-demo
+target_source: Локальный проект (Flask)
+tools_used: Semgrep 1.176.0
+scan_type: SAST (Static Application Security Testing)
+findings_count: 10
+severity_breakdown: Critical=1, High=4, Medium=4, Low=1
+legal_compliance: Сканирование собственного кода, разрешено
+expert: Виктория
