@@ -1,0 +1,105 @@
+                    
+                    
+┌──────────────────┐
+│ 10 Code Findings │
+└──────────────────┘
+                         
+  [36m[22m[24m  app.py[0m
+    ❯❱ [1mpython.django.security.injection.sql.sql-injection-using-db-cursor-execute.sql-injection-db-cursor-execute[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          User-controlled data from a request is passed to 'execute()'. This could lead to a SQL injection and
+          therefore protected information could be leaked. Instead, use django's QuerySets, which are built   
+          with query parameterization and therefore not vulnerable to sql injection. For example, you could   
+          use `Entry.objects.filter(date=2006)`.                                                              
+          Details: https://sg.run/qx7y                                                                        
+                                                                                                              
+           14┆ username = request.form.get("username")
+           15┆ password = request.form.get("password")
+           16┆ # УЯЗВИМОСТЬ 2: SQL-инъекция (f-string в SQL-запросе)
+           17┆ query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+           18┆ conn = sqlite3.connect("test.db")
+           19┆ cursor = conn.cursor()
+           20┆ cursor.execute(query)
+            ⋮┆----------------------------------------
+           15┆ password = request.form.get("password")
+           16┆ # УЯЗВИМОСТЬ 2: SQL-инъекция (f-string в SQL-запросе)
+           17┆ query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+           18┆ conn = sqlite3.connect("test.db")
+           19┆ cursor = conn.cursor()
+           20┆ cursor.execute(query)
+   
+   ❯❯❱ [1mpython.django.security.injection.tainted-sql-string.tainted-sql-string[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Detected user input used to manually construct a SQL string. This is usually bad practice because 
+          manual construction could accidentally result in a SQL injection. An attacker could use a SQL     
+          injection to steal or modify contents of the database. Instead, use a parameterized query which is
+          available by default in most database engines. Alternatively, consider using the Django object-   
+          relational mappers (ORM) instead of raw SQL queries.                                              
+          Details: https://sg.run/PbZp                                                                      
+                                                                                                            
+           17┆ query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+   
+   ❯❯❱ [1mpython.flask.security.injection.tainted-sql-string.tainted-sql-string[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Detected user input used to manually construct a SQL string. This is usually bad practice because 
+          manual construction could accidentally result in a SQL injection. An attacker could use a SQL     
+          injection to steal or modify contents of the database. Instead, use a parameterized query which is
+          available by default in most database engines. Alternatively, consider using an object-relational 
+          mapper (ORM) such as SQLAlchemy which will protect your queries.                                  
+          Details: https://sg.run/JxZj                                                                      
+                                                                                                            
+           17┆ query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+   
+    ❯❱ [1mpython.lang.security.audit.formatted-sql-query.formatted-sql-query[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Detected possible formatted SQL query. Use parameterized queries instead.
+          Details: https://sg.run/EkWw                                             
+                                                                                   
+           20┆ cursor.execute(query)
+   
+   ❯❯❱ [1mpython.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Avoiding SQL string concatenation: untrusted input concatenated with raw SQL query can result in SQL
+          Injection. In order to execute raw query safely, prepared statement should be used. SQLAlchemy      
+          provides TextualSQL to easily used prepared statement with named parameters. For complex SQL        
+          composition, use SQL Expression Language or Schema Definition Language. In most cases, SQLAlchemy   
+          ORM will be a better option.                                                                        
+          Details: https://sg.run/2b1L                                                                        
+                                                                                                              
+           20┆ cursor.execute(query)
+   
+   ❯❯❱ [1mpython.flask.security.insecure-deserialization.insecure-deserialization[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Detected the use of an insecure deserialization library in a Flask route. These libraries are prone
+          to code execution vulnerabilities. Ensure user data does not enter this function. To fix this, try 
+          to avoid serializing whole objects. Consider instead using a serializer such as JSON.              
+          Details: https://sg.run/N45z                                                                       
+                                                                                                             
+           27┆ obj = pickle.loads(data)
+   
+    ❯❱ [1mpython.lang.security.deserialization.pickle.avoid-pickle[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Avoid using `pickle`, which is known to lead to code execution vulnerabilities. When unpickling, the
+          serialized data could be manipulated to run arbitrary code. Instead, consider serializing the       
+          relevant data as JSON or a similar text-based serialization format.                                 
+          Details: https://sg.run/OPwB                                                                        
+                                                                                                              
+           27┆ obj = pickle.loads(data)
+   
+   ❯❯❱ [1mpython.lang.security.dangerous-system-call.dangerous-system-call[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Found user-controlled data used in a system call. This could allow a malicious actor to execute    
+          commands. Use the 'subprocess' module instead, which is easier to use without accidentally exposing
+          a command injection vulnerability.                                                                 
+          Details: https://sg.run/k0W7                                                                       
+                                                                                                             
+           34┆ result = os.popen(f"ping -c 1 {host}").read()
+   
+    ❯❱ [1mpython.flask.security.audit.debug-enabled.debug-enabled[0m
+          [31m[1m[24m❰❰ Blocking ❱❱[0m
+          Detected Flask app with debug=True. Do not deploy to production with this flag enabled as it will   
+          leak sensitive information. Instead, consider using Flask configuration variables or setting 'debug'
+          using system environment variables.                                                                 
+          Details: https://sg.run/dKrd                                                                        
+                                                                                                              
+           39┆ app.run(debug=True)

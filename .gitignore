@@ -22,7 +22,7 @@ credentials.json
 
 # Отчёты сканеров (чтобы не загружать в репозиторий)
 .horusec/
-semgrep_report.*
+semgrep_report.json
 *.sarif
 
 # Системные файлы
